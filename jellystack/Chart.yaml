@@ -1,6 +1,6 @@
 apiVersion: v2
 name: jellystack
-version: 0.1.9
+version: 0.1.10
 dependencies:
   - name: flaresolverr
     version: 0.1.0

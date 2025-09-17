@@ -82,3 +82,30 @@ sidecar:
       mountPath: "/etc/wireguard"
     - name: port-config
       mountPath: "/natpmp/"
+
+command: ["/bin/sh","-c"]
+args:
+        - |
+          CONFIG_DIR="/config/qBittorrent"
+          CONFIG_FILE="$CONFIG_DIR/qBittorrent.conf"
+          NATPMP_PORT_FILE="/natpmp/port"
+          echo "Starting entrypoint..."
+          while [ ! -f "$NATPMP_PORT_FILE" ]; do
+              echo "Waiting for NAT-PMP port file..."
+              sleep 1
+          done
+          PORT=$(cat "$NATPMP_PORT_FILE")
+          echo "NAT-PMP port found: $PORT"
+          mkdir -p "$CONFIG_DIR"
+          cat > "$CONFIG_FILE" <<EOF
+          [Preferences]
+          Connection\PortRangeMin=$PORT
+          Connection\PortRangeMax=$PORT
+          Connection\UPnP=true
+          WebUI\Port=8080
+          Downloads\SavePath=/downloads
+          EOF
+          echo "qBittorrent.conf created at $CONFIG_FILE:"
+          cat "$CONFIG_FILE"
+          echo "Starting qBittorrent..."
+          exec /init
