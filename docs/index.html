@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Helm Chart Repository - cbx0n</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 750px;
+      margin: 50px auto;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      color: #005f99;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>cbx0n Helm Chart Repository</h1>
+  <p>
+    Welcome! This site hosts a <strong>Helm chart repository</strong>.  
+    You can add it to your local Helm client and install charts directly from here.
+  </p>
+
+  <h2>How to Use</h2>
+  <p>Add the repository to Helm:</p>
+  <pre><code>helm repo add cbx0n https://cbx0n.github.io/charts/</code></pre>
+
+  <p>Update your Helm repositories:</p>
+  <pre><code>helm repo update</code></pre>
+
+  <p>Search for charts:</p>
+  <pre><code>helm search repo cbx0n</code></pre>
+
+  <p>Install a chart (replace <code>&lt;chart-name&gt;</code> with the chart you want):</p>
+  <pre><code>helm install my-release cbx0n/&lt;chart-name&gt;</code></pre>
+
+  <h2>Notes</h2>
+  <ul>
+    <li>The <code>index.yaml</code> file in this repository is what Helm uses to discover available charts.</li>
+    <li>This HTML page is just for human-readable information.</li>
+  </ul>
+</body>
+</html>
