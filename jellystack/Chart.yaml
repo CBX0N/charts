@@ -1,6 +1,6 @@
 apiVersion: v2
 name: jellystack
-version: 0.1.7
+version: 0.1.8
 dependencies:
   - name: flaresolverr
     version: 0.1.0
@@ -22,3 +22,7 @@ dependencies:
     version: 0.1.0
     repository: "file://charts/prowlarr"
     condition: prowlarr.enabled
+  - name: qbittorrent
+    version: 0.1.0
+    repository: "file://charts/qbittorrent"
+    condition: qbittorrent.enabled
