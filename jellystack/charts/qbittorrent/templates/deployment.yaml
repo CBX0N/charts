@@ -53,6 +53,14 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              echo "Updating for natpnp port....";
+              PORT=$(echo "/natpnp/port")
+              sed -i 's/Session\\Port=6881/Session\\Port=NEW_PORT/' /config/qBittorrent/qBittorrent.conf
+              sed -i 's/Session\\Port=6881/Session\\Port=NEW_PORT/' /config/qBittorrent/qBittorrent.conf
+              exec /init
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

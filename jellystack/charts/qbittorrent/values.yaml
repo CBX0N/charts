@@ -56,12 +56,12 @@ volumes:
   - name: wg-config
     secret:
       secretName: wg-conf
-  - name: config
+  - name: port-config
     emptyDir:
       sizeLimit: 500Mi
 volumeMounts:
-  - name: config
-    mountPath: "/config/qBittorrent/"
+  - name: port-config
+    mountPath: "/natpmp/"
 
 nodeSelector: {}
 
@@ -80,5 +80,5 @@ sidecar:
     - name: wg-config
       readOnly: true
       mountPath: "/etc/wireguard"
-    - name: config
-      mountPath: "/config/qBittorrent/"
+    - name: port-config
+      mountPath: "/natpmp/"
