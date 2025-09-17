@@ -1,0 +1,32 @@
+apiVersion: v1
+entries:
+  jellystack:
+  - apiVersion: v2
+    created: "2025-09-17T12:15:01.043126766+01:00"
+    dependencies:
+    - condition: flaresolverr.enabled
+      name: flaresolverr
+      repository: file://charts/flaresolverr
+      version: 0.1.0
+    - condition: gluetun.enabled
+      name: gluetun
+      repository: file://charts/gluetun
+      version: 0.1.0
+    - condition: sonarr.enabled
+      name: sonarr
+      repository: file://charts/sonarr
+      version: 0.1.0
+    - condition: radarr.enabled
+      name: radarr
+      repository: file://charts/radarr
+      version: 0.1.0
+    - condition: prowlarr.enabled
+      name: prowlarr
+      repository: file://charts/prowlarr
+      version: 0.1.0
+    digest: 34af567e3c0ca83136bbf8ac5399761796523d9230f38bb839c1c051bec71f78
+    name: jellystack
+    urls:
+    - https://cbx0n.github.io/charts/jellystack-0.1.7.tgz
+    version: 0.1.7
+generated: "2025-09-17T12:15:01.038222497+01:00"
