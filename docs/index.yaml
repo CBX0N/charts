@@ -2,7 +2,39 @@ apiVersion: v1
 entries:
   jellystack:
   - apiVersion: v2
-    created: "2025-09-17T15:26:05.44658038+01:00"
+    created: "2025-09-17T15:31:47.354079514+01:00"
+    dependencies:
+    - condition: flaresolverr.enabled
+      name: flaresolverr
+      repository: file://charts/flaresolverr
+      version: 0.1.0
+    - condition: gluetun.enabled
+      name: gluetun
+      repository: file://charts/gluetun
+      version: 0.1.0
+    - condition: sonarr.enabled
+      name: sonarr
+      repository: file://charts/sonarr
+      version: 0.1.0
+    - condition: radarr.enabled
+      name: radarr
+      repository: file://charts/radarr
+      version: 0.1.0
+    - condition: prowlarr.enabled
+      name: prowlarr
+      repository: file://charts/prowlarr
+      version: 0.1.0
+    - condition: qbittorrent.enabled
+      name: qbittorrent
+      repository: file://charts/qbittorrent
+      version: 0.1.0
+    digest: a4a14fbb5239139fc2f1f2809f5bbd7879512974d131243d55d77e5cf7d0e7e4
+    name: jellystack
+    urls:
+    - https://cbx0n.github.io/charts/jellystack-0.1.9.tgz
+    version: 0.1.9
+  - apiVersion: v2
+    created: "2025-09-17T15:31:47.350579512+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -34,7 +66,7 @@ entries:
     - https://cbx0n.github.io/charts/jellystack-0.1.8.tgz
     version: 0.1.8
   - apiVersion: v2
-    created: "2025-09-17T15:26:05.442295271+01:00"
+    created: "2025-09-17T15:31:47.347175281+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -61,4 +93,4 @@ entries:
     urls:
     - https://cbx0n.github.io/charts/jellystack-0.1.7.tgz
     version: 0.1.7
-generated: "2025-09-17T15:26:05.437435293+01:00"
+generated: "2025-09-17T15:31:47.344004515+01:00"
