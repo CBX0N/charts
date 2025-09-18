@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/prowlarr
+  repository: ghcr.io/fallenbagel/jellyseerr
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -19,7 +19,7 @@ securityContext: {}
 
 service:
   enabled: true
-  port: 9696
+  port: 5055
   type: ClusterIP
 
 ingress:
@@ -37,10 +37,7 @@ livenessProbe: {}
 readinessProbe: {}
 lifecycle: {}
 
-volumes:
-  - name: wg-config
-    secret:
-      secretName: wg-conf
+volumes: []
 volumeMounts: []
 
 nodeSelector: {}
@@ -48,15 +45,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-sidecar:
-  enabled: true
-  image: "ghcr.io/cbx0n/wgpmp:latest"
-  securityContext:
-    privileged: true
-    capabilities:
-      add: ["NET_ADMIN"]
-  volumeMounts:
-    - name: wg-config
-      readOnly: true
-      mountPath: "/etc/wireguard"

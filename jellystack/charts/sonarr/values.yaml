@@ -23,20 +23,13 @@ service:
   type: ClusterIP
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations:
     cert-manager.io/cluster-issuer: "cert-cluster-issuer"
     nginx.ingress.kubernetes.io/rewrite-target: /
-  hosts:
-    - host: sonarr.cbxon.co.uk
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: sonarr-tls
-      hosts:
-        - sonarr.cbxon.co.uk
+  hosts: []
+  tls: []
 
 resources: {}
 

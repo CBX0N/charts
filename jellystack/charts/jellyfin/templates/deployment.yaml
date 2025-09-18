@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "qbittorrent.fullname" . }}
+  name: {{ include "jellyfin.fullname" . }}
   labels:
-    {{- include "qbittorrent.labels" . | nindent 4 }}
+    {{- include "jellyfin.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "qbittorrent.selectorLabels" . | nindent 6 }}
+      {{- include "jellyfin.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,7 +16,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "qbittorrent.labels" . | nindent 8 }}
+        {{- include "jellyfin.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -30,18 +30,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      {{- if .Values.sidecar.enabled }}
-        - name: {{ .Chart.Name }}-sidecar
-          image: {{ .Values.sidecar.image }}
-          {{- with .Values.sidecar.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.sidecar.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-        {{- end }}
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
           securityContext:
@@ -53,12 +41,6 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: {{- with .Values.command }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          args: {{- with .Values.args }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

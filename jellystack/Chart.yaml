@@ -1,15 +1,11 @@
 apiVersion: v2
 name: jellystack
-version: 0.1.10
+version: 0.1.11
 dependencies:
   - name: flaresolverr
     version: 0.1.0
     repository: "file://charts/flaresolverr"
     condition: flaresolverr.enabled
-  - name: gluetun
-    version: 0.1.0
-    repository: "file://charts/gluetun"
-    condition: gluetun.enabled
   - name: sonarr
     version: 0.1.0
     repository: "file://charts/sonarr"
@@ -26,3 +22,11 @@ dependencies:
     version: 0.1.0
     repository: "file://charts/qbittorrent"
     condition: qbittorrent.enabled
+  - name: jellyfin
+    version: 0.1.0
+    repository: "file://charts/jellyfin"
+    condition: jellyfin.enabled
+  - name: jellyseerr
+    version: 0.1.0
+    repository: "file://charts/jellyseerr"
+    condition: jellyseerr.enabled

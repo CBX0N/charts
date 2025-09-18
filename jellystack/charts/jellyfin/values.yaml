@@ -1,14 +1,20 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/prowlarr
+  repository: jellyfin/jellyfin
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-env: {}
+env:
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+  - name: TZ
+    value: "Etc/UTC"
 
 podAnnotations: {}
 podLabels: {}
@@ -19,7 +25,7 @@ securityContext: {}
 
 service:
   enabled: true
-  port: 9696
+  port: 8096
   type: ClusterIP
 
 ingress:
@@ -37,10 +43,7 @@ livenessProbe: {}
 readinessProbe: {}
 lifecycle: {}
 
-volumes:
-  - name: wg-config
-    secret:
-      secretName: wg-conf
+volumes: []
 volumeMounts: []
 
 nodeSelector: {}
@@ -48,15 +51,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-sidecar:
-  enabled: true
-  image: "ghcr.io/cbx0n/wgpmp:latest"
-  securityContext:
-    privileged: true
-    capabilities:
-      add: ["NET_ADMIN"]
-  volumeMounts:
-    - name: wg-config
-      readOnly: true
-      mountPath: "/etc/wireguard"
