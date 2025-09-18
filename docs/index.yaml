@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   jellystack:
   - apiVersion: v2
-    created: "2025-09-18T11:11:53.124847179+01:00"
+    created: "2025-09-18T11:18:52.463674143+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -32,13 +32,13 @@ entries:
       name: jellyseerr
       repository: file://charts/jellyseerr
       version: 0.1.0
-    digest: 94d91c112a5878e8ddad3852e39d5dd664a47ff33c306067ac1184cf32999e68
+    digest: 69fa822ee3cc411794f4f9a3b3b1fe167734162e1ae6d46f72f6c8d81d297b83
     name: jellystack
     urls:
     - https://cbx0n.github.io/charts/jellystack-0.1.11.tgz
     version: 0.1.11
   - apiVersion: v2
-    created: "2025-09-18T11:11:53.119136554+01:00"
+    created: "2025-09-18T11:18:52.460295969+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -70,7 +70,7 @@ entries:
     - https://cbx0n.github.io/charts/jellystack-0.1.10.tgz
     version: 0.1.10
   - apiVersion: v2
-    created: "2025-09-18T11:11:53.15111403+01:00"
+    created: "2025-09-18T11:18:52.473668441+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -102,7 +102,7 @@ entries:
     - https://cbx0n.github.io/charts/jellystack-0.1.9.tgz
     version: 0.1.9
   - apiVersion: v2
-    created: "2025-09-18T11:11:53.142246703+01:00"
+    created: "2025-09-18T11:18:52.470335129+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -134,7 +134,7 @@ entries:
     - https://cbx0n.github.io/charts/jellystack-0.1.8.tgz
     version: 0.1.8
   - apiVersion: v2
-    created: "2025-09-18T11:11:53.133977597+01:00"
+    created: "2025-09-18T11:18:52.466664698+01:00"
     dependencies:
     - condition: flaresolverr.enabled
       name: flaresolverr
@@ -161,4 +161,4 @@ entries:
     urls:
     - https://cbx0n.github.io/charts/jellystack-0.1.7.tgz
     version: 0.1.7
-generated: "2025-09-18T11:11:53.108328321+01:00"
+generated: "2025-09-18T11:18:52.456481798+01:00"
