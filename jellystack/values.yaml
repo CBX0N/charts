@@ -1,0 +1,304 @@
+priortyClasses:
+  jellystack-high:
+    enabled: true
+    value: "100000000"
+    description: "This priority class should be used for Jellyfin & Qbittorrent service pods only."
+
+wireguard:
+  enabled: true
+  secretName: wireguard-config
+  configFile1: ""      
+  configFile2: ""
+
+dnsmasq:
+  enabled: true
+  configMapName: dnsmasq-conf
+  configFile: |
+      server=/cluster.local/10.43.0.10
+      server=/in-addr.arpa/10.43.0.10
+      server=/ip6.arpa/10.43.0.10
+      server=1.1.1.1
+
+smb:
+  enabled: false
+  secretName: ""
+  user: ""
+  password: ""
+  domain: ""
+
+services:
+  prowlarr:
+    enabled: true
+    replicas: 1
+    image: lscr.io/linuxserver/prowlarr:latest
+    dnsPolicy: None
+    dnsConfig: 
+      nameservers:
+        - 127.0.0.1
+      searches:
+        - svc.cluster.local
+        - cluster.local
+    ports:
+      - name: http
+        containerPort: 9696
+        protocol: TCP
+    volumeMounts:
+      - name: prowlarr-config
+        mountPath: /config
+    service:
+      type: ClusterIP
+      port: 9696
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: prowlarr-tls
+      host: ""
+      port: 9696
+    volumes:
+      - name: prowlarr-config
+        type: pvc
+        size: 500Mi
+      - name: wireguard
+        type: secret
+        secretName: wireguard-config
+      - name: dnsmasq-conf
+        type: configmap
+        configMapName: dnsmasq-conf
+    sidecars:
+      - name: wireguard
+        image: ghcr.io/cbx0n/wgpmp:latest
+        volumeMounts:
+          - name: wireguard
+            mountPath: "/etc/wireguard/wg0.conf"
+            subPath: wg0.conf
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN"]
+      - name: dnsmasq
+        image: 4km3/dnsmasq:latest
+        args:
+          - "-k"
+          - "--conf-file=/etc/dnsmasq.conf"
+          - "--log-queries"
+          - "--log-facility=-"
+        volumeMounts:
+          - name: dnsmasq-conf
+            mountPath: "/etc/dnsmasq.conf"
+            subPath: dnsmasq.conf
+
+  qbittorrent:
+    enabled: true
+    replicas: 1
+    image: lscr.io/linuxserver/qbittorrent:latest
+    priorityClassName: jellystack-high
+    ports:
+      - name: http
+        containerPort: 8080
+        protocol: TCP
+    volumeMounts:
+      - name: port-config
+        mountPath: "/natpmp/"
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: qbittorrent-tls
+      host: ""
+      port: 8080
+    volumes:
+      - name: port-config
+        type: pvc
+        size: 500Mi
+      - name: wireguard
+        type: secret
+        secretName: wireguard-config
+    env:
+      - name: PUID
+        value: "1000"
+      - name: PGID
+        value: "1000"
+      - name: TZ
+        value: "Etc/UTC"
+      - name: WEBUI_PORT
+        value: "8080"
+    command: ["/bin/sh","-c"]
+    args:
+      - |
+        CONFIG_DIR="/config/qBittorrent"
+        CONFIG_FILE="$CONFIG_DIR/qBittorrent.conf"
+        NATPMP_PORT_FILE="/natpmp/port"
+        echo "Starting entrypoint..."
+        while [ ! -f "$NATPMP_PORT_FILE" ]; do
+            echo "Waiting for NAT-PMP port file..."
+            sleep 1
+        done
+        PORT=$(cat "$NATPMP_PORT_FILE")
+        echo "NAT-PMP port found: $PORT"
+        mkdir -p "$CONFIG_DIR"
+        cat > "$CONFIG_FILE" <<EOF
+        [Preferences]
+        Connection\PortRangeMin=$PORT
+        Connection\PortRangeMax=$PORT
+        Connection\UPnP=true
+        WebUI\Port=8080
+        Downloads\SavePath=/downloads
+        WebUI\AuthSubnetWhitelist=10.43.0.0/16, 10.42.0.0/16
+        WebUI\AuthSubnetWhitelistEnabled=true
+
+        [BitTorrent]
+        Session\MaxConnections=-1
+        Session\MaxConnectionsPerTorrent=-1
+        Session\MaxUploads=-1
+        Session\MaxUploadsPerTorrent=-1
+        EOF
+        echo "qBittorrent.conf created at $CONFIG_FILE:"
+        cat "$CONFIG_FILE"
+        echo "Starting qBittorrent..."
+        exec /init
+    sidecars:
+      - name: wireguard
+        image: ghcr.io/cbx0n/wgpmp:latest
+        volumeMounts:
+          - name: wireguard
+            mountPath: "/etc/wireguard/wg0.conf"
+            subPath: wg1.conf
+          - name: port-config
+            mountPath: "/natpmp/"
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN"]
+
+  flaresolverr:
+    enabled: true
+    replicas: 1
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    ports:
+      - name: http
+        containerPort: 8191
+        protocol: TCP
+    service:
+      type: ClusterIP
+      port: 8191
+    ingress:
+      enabled: false
+
+  jellyfin:
+    enabled: true
+    priorityClassName: jellystack-high
+    replicas: 1
+    image: jellyfin/jellyfin:latest
+    env:
+      - name: PUID
+        value: "1000"
+      - name: PGID
+        value: "1000"
+      - name: TZ
+        value: "Etc/UTC"
+    ports:
+      - name: http
+        containerPort: 8096
+        protocol: TCP
+      - name: https 
+        containerPort: 8920
+        protocol: TCP
+      - name: serv
+        containerPort: 1900
+        protocol: UDP
+      - name: client
+        containerPort: 7359
+        protocol: UDP
+    service:
+      type: ClusterIP
+      port: 8096
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: jellyfin-tls
+      host: ""
+      port: 8096
+    volumeMounts:
+      - name: jellyfin-config
+        mountPath: /config
+    volumes:
+      - name: jellyfin-config
+        type: pvc
+        size: 500Mi
+
+  jellyseerr:
+    enabled: true
+    replicas: 1
+    image: ghcr.io/fallenbagel/jellyseerr:latest
+    ports:
+      - name: http
+        containerPort: 5055
+        protocol: TCP
+    service:
+      type: ClusterIP
+      port: 5055
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: jellyseerr-tls
+      host: ""
+      port: 5055
+    volumeMounts:
+      - name: jellyseerr-config
+        mountPath: /config
+    volumes:
+      - name: jellyseerr-config
+        type: pvc
+        size: 500Mi
+      
+  radarr:
+    enabled: true
+    replicas: 1
+    image: lscr.io/linuxserver/radarr:latest
+    ports:
+      - name: http
+        containerPort: 7878
+        protocol: TCP
+    service:
+      type: ClusterIP
+      port: 7878
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: radarr-tls
+      host: ""
+      port: 7878
+    volumeMounts:
+      - name: radarr-config
+        mountPath: /config
+    volumes:
+      - name: radarr-config
+        type: pvc
+        size: 500Mi
+      
+  sonarr:
+    enabled: true
+    replicas: 1
+    image: lscr.io/linuxserver/sonarr:latest
+    ports:
+      - name: http
+        containerPort: 8989
+        protocol: TCP
+    service:
+      type: ClusterIP
+      port: 8989
+    ingress:
+      enabled: false
+      tls: true
+      tlsSecret: sonarr-tls
+      host: ""
+      port: 8989
+    volumeMounts:
+      - name: sonarr-config
+        mountPath: /config
+    volumes:
+      - name: sonarr-config
+        type: pvc
+        size: 500Mi

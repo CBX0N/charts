@@ -1,0 +1,104 @@
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    app: {{ $name }}
+    app.kubernetes.io/name: {{ $name }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+spec:
+  replicas: {{ $svc.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+        app.kubernetes.io/name: {{ $name }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+    spec:
+      priorityClassName: {{ $svc.priorityClassName }}
+      {{- if $svc.podSecurityContext }}
+      securityContext:
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
+      dnsPolicy: {{ $svc.dnsPolicy}}
+      {{- if $svc.dnsConfig }}
+      dnsConfig: {{ toYaml .dnsConfig | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ $svc.image }}
+          {{- if $svc.env }}
+          env: {{ toYaml .env | nindent 12 }}
+          {{- end }}
+          {{- if $svc.command }}
+          command: {{ toYaml .command | nindent 12 }}
+          {{- end }}
+          {{- if $svc.args }}
+          args: {{ toYaml .args | nindent 12 }}
+          {{- end }}
+          {{- if $svc.containerSecurityContext }}
+          securityContext: {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if $svc.ports }}
+          ports:
+          {{- range $svc.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ default "TCP" .protocol }}
+          {{- end }}
+          {{- end }}
+          {{- if $svc.volumeMounts }}
+          volumeMounts: {{ toYaml .volumeMounts | nindent 12 }}
+          {{- end }}
+
+        {{- range $svc.sidecars }}
+        - name: {{ .name }}
+          image: {{ .image }}
+          {{- if .command }}
+          command: {{ toYaml .command | nindent 12 }}
+          {{- end }}
+          {{- if .args }}
+          args: {{ toYaml .args | nindent 12 }}
+          {{- end }}
+          {{- if .volumeMounts }}
+          volumeMounts: {{ toYaml .volumeMounts | nindent 12 }}
+          {{- end }}
+          {{- with .securityContext }}
+          securityContext: {{ toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
+
+      {{- if $svc.volumes }}
+      volumes:
+        {{- range $svc.volumes }}
+        {{- if eq .type "pvc" }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ $name }}-{{ .name }}-pvc
+        {{- else if eq .type "secret" }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+        {{- else if eq .type "configmap" }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMapName }}
+        {{- else if eq .type "csi" }}
+        - name: {{ .name }}
+          csi:
+            driver: {{ .driver }}
+            volumeAttributes:
+              source: {{ .source }}
+              secretName: {{ .secretName }}
+              mountOptions: {{ .mountOptions }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}

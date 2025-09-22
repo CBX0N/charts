@@ -1,0 +1,34 @@
+{{- range $name, $svc := .Values.services }}
+{{- if and $svc.enabled $svc.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}-ingress
+  labels:
+    app: {{ $name }}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+    cert-manager.io/cluster-issuer: "cert-cluster-issuer"
+spec:
+  ingressClassName: "nginx"
+  {{- if $svc.ingress.tls }}
+  tls:
+    - hosts:
+        - {{ $svc.ingress.host }}
+      secretName: {{ $svc.ingress.tlsSecret | default (printf "%s-tls" $name) }}
+  {{- end }}
+  rules:
+    - host: {{ $svc.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: {{ $svc.service.port }}
+---
+{{- end }}
+{{- end }}

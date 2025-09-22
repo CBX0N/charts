@@ -1,0 +1,9 @@
+{{- if (default false .Values.dnsmasq.enabled) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.dnsmasq.configMapName }}
+data:
+  dnsmasq.conf: |
+{{ .Values.dnsmasq.configFile | indent 4 }}
+{{- end }}
