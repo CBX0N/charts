@@ -29,6 +29,9 @@ spec:
       {{- if $svc.dnsConfig }}
       dnsConfig: {{ toYaml .dnsConfig | nindent 8 }}
       {{- end }}
+      {{- if $svc.affinity }}
+      affinity: {{ toYaml .affinity | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ $name }}
           image: {{ $svc.image }}

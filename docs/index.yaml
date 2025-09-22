@@ -3,7 +3,17 @@ entries:
   jellystack:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-09-22T12:40:09.36978489+01:00"
+    created: "2025-09-22T15:43:52.20130571+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 8589d8e54da96e0b769daaf906527571fe2036b3f3fb27ca37fafc694329e6ba
+    name: jellystack
+    type: application
+    urls:
+    - https://cbx0n.github.io/charts/jellystack-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-09-22T15:43:52.198409797+01:00"
     description: A Helm chart for Kubernetes
     digest: d46c0381ba56bf11bb9926dd8adb4b322c51bae7c3ddcb7b04505ea34984a932
     name: jellystack
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://cbx0n.github.io/charts/jellystack-1.0.0.tgz
     version: 1.0.0
-generated: "2025-09-22T12:40:09.366071711+01:00"
+generated: "2025-09-22T15:43:52.194918271+01:00"

@@ -92,6 +92,13 @@ services:
     replicas: 1
     image: lscr.io/linuxserver/qbittorrent:latest
     priorityClassName: jellystack-high
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: jellyfin
+            topologyKey: "kubernetes.io/hostname"
     ports:
       - name: http
         containerPort: 8080
@@ -191,6 +198,13 @@ services:
     priorityClassName: jellystack-high
     replicas: 1
     image: jellyfin/jellyfin:latest
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: qbittorrent
+            topologyKey: "kubernetes.io/hostname"
     env:
       - name: PUID
         value: "1000"
